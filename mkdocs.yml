@@ -1,0 +1,133 @@
+site_name: 800-CarWash Engineering Architecture & System Design
+site_description: Enterprise Architecture, Business Requirements, API Specifications, Database Schema, and Operations Runbook for 800-CarWash On-Demand Platform.
+site_author: 800-CarWash Engineering Team
+site_url: https://docs.800carwash.ae/
+
+repo_name: 800carwash/platform-docs
+repo_url: https://github.com/800carwash/platform-docs
+
+theme:
+  name: material
+  language: en
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: teal
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+  - assets/javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - assets/javascripts/mermaid.js
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.keys
+  - attr_list
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Overview:
+      - Introduction: index.md
+      - Ecosystem & Applications: overview/ecosystem.md
+      - Technology Stack: overview/tech-stack.md
+  - Business Requirements:
+      - Vision & Scope: business/vision.md
+      - User Personas & Roles: business/personas.md
+      - Service Catalog & Pricing: business/catalog-pricing.md
+      - Service Zones & Geofencing: business/geofencing.md
+      - Ordering & Scheduling Engine: business/ordering-scheduling.md
+      - Multi-Car Architecture: business/multi-car.md
+      - Subscriptions Module: business/subscriptions.md
+      - Growth & Retention (Promos, Loyalty, Referrals): business/growth-retention.md
+      - Operational Exceptions & Penalties: business/exception-matrix.md
+  - System Design:
+      - High-Level C4 Architecture: system-design/c4-architecture.md
+      - Real-Time & WebSockets: system-design/realtime-tracking.md
+      - Security & Authentication: system-design/security-auth.md
+      - Storage & Media Pipeline: system-design/storage-pipeline.md
+  - Database & Data Models:
+      - Comprehensive ERD: database/erd.md
+      - Core Entities Schema: database/core-entities.md
+      - Order & Fulfillment Schema: database/order-schema.md
+      - Geofencing & Sub-Zones Schema: database/spatial-schema.md
+      - Subscriptions & Growth Schema: database/growth-schema.md
+  - API Specifications:
+      - Overview & Auth: api/overview.md
+      - Customer API: api/customer-api.md
+      - Specialist API: api/specialist-api.md
+      - Admin Ops API: api/admin-api.md
+      - WebSocket Events: api/websocket-events.md
+  - App-by-App User Flows:
+      - Customer Mobile App: flows/customer-flow.md
+      - Specialist Mobile App: flows/specialist-flow.md
+      - Admin Web Portal: flows/admin-flow.md
+  - Architecture Decision Records (ADR):
+      - ADR-001 Modular Monolith: adr/ADR-001-modular-monolith.md
+      - ADR-002 PostGIS Geofencing: adr/ADR-002-postgis-geofencing.md
+      - ADR-003 Multi-Car Order Model: adr/ADR-003-multi-car-order-model.md
+      - ADR-004 Payment Phasing Strategy: adr/ADR-004-payment-phasing-strategy.md
+      - ADR-005 Direct Admin Dispatch: adr/ADR-005-direct-admin-dispatch.md
+      - ADR-006 S3 Pre-signed Uploads: adr/ADR-006-s3-presigned-uploads.md
+  - Engineering Governance:
+      - Git & Release Strategy: governance/git-workflow.md
+      - Environments & DevOps: governance/environments-devops.md
+      - Audit Logging & Observability: governance/audit-logging.md
