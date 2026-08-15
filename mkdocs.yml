@@ -105,6 +105,7 @@ nav:
       - Real-Time & WebSockets: system-design/realtime-tracking.md
       - Security & Authentication: system-design/security-auth.md
       - Storage & Media Pipeline: system-design/storage-pipeline.md
+      - Mobile OTA Updates System: system-design/mobile-ota-updates.md
   - Database & Data Models:
       - Comprehensive ERD: database/erd.md
       - Core Entities Schema: database/core-entities.md
