@@ -12,29 +12,26 @@ graph TD
     B -->|No| C["2. Phone Number Entry"]
     C --> D["3. 6-Digit SMS OTP Verification"]
     D --> E{"Profile Completed?"}
-    E -->|New User / Incomplete| F["4. Mandatory Profile Completion (Name mandatory, Email optional)"]
+    E -->|New User / Incomplete| F["4. Mandatory Profile Setup (Name mandatory, Email optional)"]
     F --> G["5. Home Dashboard"]
     E -->|Existing User| G
     B -->|Yes| G
 
-    G --> H["6. Service Package Selection"]
-    H --> I["7. Vehicle Selection & Add-on Customization"]
-    I --> J{"Add Another Car?"}
-    J -->|Yes| I
-    J -->|No| K["8. Time Mode: On-Demand vs. Scheduled Slot"]
+    G --> H["6. Step 1: Choose Main Service Package"]
+    H --> I["7. Step 2: Select Car(s) from Garage"]
+    I --> J["8. Step 3: Choose Desired Add-ons (Flat-rate)"]
     
-    K --> L["9. Location Pin Picker / Saved Address"]
-    L --> M{"Geofence Check (PostGIS)"}
-    M -->|Outside Service Area| N["⚠️ 'Service Unavailable' Alert (Blocked)"]
+    J --> K["9. Step 4: Pick Timing (On-Demand or Scheduled Slot)"]
+    K --> L["10. Step 5: Location Picker & Geofence Validation"]
+    L --> M{"Inside Active Service Zone?"}
+    M -->|Outside| N["⚠️ 'Service Unavailable' Alert (Blocked)"]
     N --> L
-    M -->|Inside Sub-Zone| O["10. Checkout & Payment Method (COD / POS)"]
+    M -->|Inside| O["11. Step 6: Checkout & Order Creation (COD / POS)"]
     
-    O --> P["11. Order Placed & Specialist Assigned"]
-    P --> Q["12. Live GPS Tracking (En Route)"]
-    Q --> R["13. Inspection Photos & Washing Progress"]
-    R --> S["14. Payment Settlement"]
-    S --> T["15. 1-5 Star Rating & Specialist Tipping"]
-    T --> U["16. PDF Invoice Emailed & Loyalty Awarded"]
+    O --> P["12. Order Dispatched to Specialist"]
+    P --> Q["13. Real-Time Tracking & Inspection Photos"]
+    Q --> R["14. Wash Complete & Payment Settlement"]
+    R --> S["15. Rating, Tip & Digital Invoice"]
 ```
 
 ---

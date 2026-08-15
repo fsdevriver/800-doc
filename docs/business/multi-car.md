@@ -6,30 +6,33 @@ A flagship capability of 800-CarWash is the ability for a customer to book washe
 
 ## 1. Multi-Car Order Principles
 
-In residential villas, family compounds, and workplace parking lots across Dubai, customers often own more than one vehicle (e.g. 1 Sedan and 1 SUV).
+In residential villas, family compounds, and workplace parking lots across Dubai, customers frequently book services for **more than one vehicle at the same location** in a single checkout.
 
 ```mermaid
 graph TD
     ORDER["📦 Single Master Order (#800-10928) - Arabian Ranches"]
     
-    ITEM1["🚗 Item 1: BMW 3 Series (Sedan) - Exterior Express (Completed)"]
-    ITEM2["🚙 Item 2: Range Rover (SUV) - Full Signature Care (Washing)"]
+    ITEM1["🚗 Vehicle 1: BMW 3 Series (Sedan) - Exterior Express (45 AED) + Tire Gel (15 AED)"]
+    ITEM2["🚙 Vehicle 2: Range Rover (SUV) - Exterior Express (60 AED) + Tire Gel (15 AED)"]
 
     ORDER --> ITEM1
     ORDER --> ITEM2
 ```
 
-### Key Business Rules:
-1. **Heterogeneous Vehicle Configurations**:
-    - Different car types have different baseline prices.
-    - Each vehicle can have completely different core services and add-on selections.
-2. **Sequential Field Execution**:
-    - A single assigned specialist washes the vehicles **one by one in sequence**.
-    - Total estimated service time is the cumulative sum of all vehicles' durations:
-      $$\text{Total Duration} = \sum_{i=1}^{N} \left( \text{Duration}(\text{Service}_i) + \sum \text{Duration}(\text{Addon}_{i, j}) \right)$$
-3. **Independent Photo Quality Gates**:
-    - The specialist must capture and upload 2–4 "Before" and 2–4 "After" photos **for each individual vehicle**.
-    - Vehicle 1 cannot be marked finished without its photos; Vehicle 2 must have its own separate photo set.
+### Simplified Customer Journey:
+1. **Choose Service**: Customer selects the desired main package (e.g. *Exterior Express Wash*).
+2. **Select Vehicle(s)**: Customer checks off the cars to be washed (e.g. *Sedan* and *SUV*). The service price adjusts automatically per vehicle type.
+3. **Choose Add-ons**: Customer selects optional enhancements (e.g. *Tire Gel Shine*, *AC Ozone Shot*). All add-ons carry a **universal flat rate** regardless of car type.
+4. **Order Creation**: A single master order with individual vehicle items is created.
+
+### Key Operational Rules:
+1. **Sequential Field Execution**:
+   - A single assigned specialist washes the vehicles **one by one in sequence**.
+   - Total service time is calculated cumulatively:
+     $$\text{Total Duration} = \sum_{i=1}^{N} \left( \text{Duration}(\text{Service}_i, \text{CarType}_i) + \sum \text{Duration}(\text{Addon}_j) \right)$$
+2. **Per-Vehicle Inspection Quality Gates**:
+   - The specialist must capture 2–4 "Before" and 2–4 "After" photos **for each individual vehicle item**.
+   - Vehicle 1 cannot be marked finished without its photos; Vehicle 2 must have its own separate photo set.
 
 ---
 

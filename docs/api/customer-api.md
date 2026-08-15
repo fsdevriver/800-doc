@@ -119,35 +119,46 @@ Validates whether a GPS pin falls within an active service sub-zone.
 }
 ```
 
-### `POST /api/v1/customer/orders/checkout`
-Creates a single or multi-car order.
+### `POST /api/v1/orders/checkout`
+Creates a master order for one or more vehicles with selected service & flat-rate add-ons.
 ```json
 // Request Body
 {
-  "order_type": "SCHEDULED", // or "ON_DEMAND"
-  "scheduled_start_time": "2026-08-16T10:00:00.000Z",
-  "latitude": 25.1972,
-  "longitude": 55.2744,
-  "address_text": "Villa 14, Street 2B, Arabian Ranches",
-  "parking_floor_spot": "Main Driveway",
-  "access_instructions": "Gate code #4421",
-  "payment_method": "POS_CARD", // or "COD"
-  "promo_code": "DUBAI20",
-  "redeem_loyalty_points": 100,
-  "items": [
+  "service_id": "8a9b0c1d-2e3f-4a5b-6c7d-8e9f0a1b2c3d", // e.g. Exterior Express Wash
+  "order_type": "ON_DEMAND", // ON_DEMAND | SCHEDULED | SUBSCRIPTION
+  "scheduled_start_time": null, // ISO8601 if SCHEDULED
+  "location_id": "9b0c1d2e-3f4a-5b6c-7d8e-9f0a1b2c3d4e",
+  "vehicles": [
     {
-      "vehicle_id": "4b5c6d7e-8f9a-0b1c-2d3e-4f5a6b7c8d9e",
-      "service_id": "1c2d3e4f-5a6b-7c8d-9e0f-1a2b3c4d5e6f",
-      "addon_option_ids": [
-        "8a7b6c5d-4e3f-2a1b-0c9d-8e7f6a5b4c3d"
+      "vehicle_id": "4c5d6e7f-8a9b-0c1d-2e3f-4a5b6c7d8e9f", // Sedan (45 AED)
+      "addon_ids": [
+        "1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e" // Tire Gel Flat Rate (15 AED)
       ]
     },
     {
-      "vehicle_id": "5c6d7e8f-9a0b-1c2d-3e4f-5a6b7c8d9e0f",
-      "service_id": "2d3e4f5a-6b7c-8d9e-0f1a-2b3c4d5e6f7a",
-      "addon_option_ids": []
+      "vehicle_id": "5d6e7f8a-9b0c-1d2e-3f4a-5b6c7d8e9f0a", // SUV (60 AED)
+      "addon_ids": [
+        "1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e" // Tire Gel Flat Rate (15 AED)
+      ]
     }
-  ]
+  ],
+  "promo_code": "WELCOME20",
+  "redeem_loyalty_points": 50,
+  "payment_method": "COD" // COD | POS_CARD
+}
+
+// Response: 201 Created
+{
+  "success": true,
+  "data": {
+    "order_id": "9f0a1b2c-3d4e-5f6a-7b8c-9d0e1f2a3b4c",
+    "order_number": "800-240816-014",
+    "subtotal_amount": 135.00,
+    "discount_amount": 20.00,
+    "total_amount": 115.00,
+    "status": "ORDER_CREATED",
+    "total_estimated_duration_min": 65
+  }
 }
 ```
 
