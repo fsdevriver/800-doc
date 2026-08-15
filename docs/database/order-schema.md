@@ -17,7 +17,7 @@ The master transactional record representing a single customer dispatch.
 | `specialist_id` | `UUID` | `FK -> specialist_profiles(id), NULLABLE` | Assigned detailing specialist. |
 | `sub_zone_id` | `UUID` | `FK -> sub_zones(id)` | Operating sub-zone. |
 | `order_type` | `VARCHAR(30)` | `NOT NULL` | Values: `ON_DEMAND`, `SCHEDULED`, `SUBSCRIPTION`. |
-| `status` | `VARCHAR(40)` | `NOT NULL, DEFAULT 'ORDER_CREATED'` | Lifecycle state: `ORDER_CREATED`, `ASSIGNED`, `ACKNOWLEDGED`, `EN_ROUTE`, `ARRIVED`, `WASHING`, `PAYMENT_PENDING`, `COMPLETED`, `CANCELLED_BY_CUSTOMER`, `CANCELLED_BY_SPECIALIST`. |
+| `status` | `VARCHAR(40)` | `NOT NULL, DEFAULT 'ORDER_CREATED'` | Lifecycle state: `ORDER_CREATED`, `ASSIGNED`, `ACKNOWLEDGED`, `EN_ROUTE`, `ARRIVED`, `CANCELLATION_REQUESTED`, `WASHING`, `PAYMENT_PENDING`, `COMPLETED`, `CANCELLED_BY_CUSTOMER`, `CANCELLED_BY_SPECIALIST`. |
 | `cancellation_reason` | `TEXT` | `NULLABLE` | Mandatory message provided when specialist cancels order. |
 | `scheduled_start_time` | `TIMESTAMPTZ` | `NULLABLE` | Exact appointment start time (for scheduled orders). |
 | `latitude` | `NUMERIC(10,7)` | `NOT NULL` | Delivery latitude. |

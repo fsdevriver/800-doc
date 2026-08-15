@@ -53,10 +53,11 @@ Transitions order to `EN_ROUTE` and initiates background GPS telemetry.
 ### `POST /api/v1/specialist/orders/{id}/arrive`
 Transitions order to `ARRIVED` upon reaching customer coordinates.
 
-### `POST /api/v1/specialist/orders/{id}/cancel`
-Specialist cancels order due to physical field constraints (locked gate, customer unreachable, severe weather).
+### `POST /api/v1/specialist/orders/{id}/cancel-request`
+Specialist requests order cancellation on-site due to physical field constraints (locked gate, customer unreachable after grace period, severe weather).
 - **Enforced Guardrail**: Can **ONLY** be executed when `order.status === 'ARRIVED'`. Calls made during `ASSIGNED`, `ACKNOWLEDGED`, or `EN_ROUTE` will be rejected with `400 Bad Request`.
 - Requires a non-empty `cancellation_reason` message.
+- Triggers high-priority WebSocket alert `admin:order:cancellation_requested` to Admin Ops Console for review.
 ```json
 // Request Body
 {
@@ -68,10 +69,10 @@ Specialist cancels order due to physical field constraints (locked gate, custome
   "success": true,
   "data": {
     "order_id": "8f3b2c1a-5d4e-4f6a-9b8c-1e2d3f4a5b6c",
-    "status": "CANCELLED_BY_SPECIALIST",
+    "status": "CANCELLATION_REQUESTED",
     "cancellation_reason": "Basement security gate locked; customer phone unreachable for 10 minutes.",
-    "cancelled_at": "2026-08-16T08:35:10.000Z",
-    "specialist_status": "AVAILABLE"
+    "requested_at": "2026-08-16T08:35:10.000Z",
+    "message": "Cancellation request submitted. Awaiting Admin approval."
   }
 }
 ```

@@ -22,6 +22,22 @@ Directly assigns an order to a specific specialist.
 ### `POST /api/v1/admin/dispatch/reassign-order`
 Reassigns an order to a secondary technician in case of emergency.
 
+### `POST /api/v1/admin/orders/{id}/approve-cancellation`
+Admin accepts on-site cancellation requested by specialist. Transitions order to `CANCELLED_BY_SPECIALIST` (0% fee) and frees specialist to `AVAILABLE`.
+```json
+// Response: 200 OK
+{
+  "success": true,
+  "data": {
+    "order_id": "8f3b2c1a-5d4e-4f6a-9b8c-1e2d3f4a5b6c",
+    "status": "CANCELLED_BY_SPECIALIST",
+    "cancellation_reason": "Basement security gate locked; customer phone unreachable for 10 minutes.",
+    "approved_by_admin_id": "1e2d3f4a-5b6c-7d8e-9f0a-1b2c3d4e5f6a",
+    "cancelled_at": "2026-08-16T08:36:00.000Z"
+  }
+}
+```
+
 ---
 
 ## 2. Geofence & Sub-Zone Management

@@ -10,18 +10,21 @@ In a mobile on-demand detailing operation, physical field anomalies (locked gate
 
 | Operational Scenario | Initiated By | System Trigger / Action | Customer Impact | Specialist & Ops Action |
 | :--- | :--- | :--- | :--- | :--- |
-| **Specialist On-Site Cancellation** | Specialist (Only after `ARRIVED`) | `POST /api/v1/specialist/orders/{id}/cancel` with explanation message. | Order status $\rightarrow$ `CANCELLED_BY_SPECIALIST`. Push notification explaining reason. | **0% Penalty**. Specialist is freed to `AVAILABLE`. **Cannot cancel before arriving on-site**. |
+| **Specialist On-Site Cancellation Request** | Specialist (Only after `ARRIVED`) | `POST /api/v1/specialist/orders/{id}/cancel-request` with explanation message. | Order $\rightarrow$ `CANCELLATION_REQUESTED`. Customer notified of review. | **Admin receives instant alert & approves cancellation**. Upon approval, status $\rightarrow$ `CANCELLED_BY_SPECIALIST` (0% Fee) & specialist freed to `AVAILABLE`. |
 | **Customer Cancellation** | Customer | Customer cancels order from app before service starts. | Order status $\rightarrow$ `CANCELLED_BY_CUSTOMER`. **0% Penalty**. | Specialist freed back to `AVAILABLE`. |
-| **Vehicle Inaccessible / Locked** | Specialist (On-site) | Specialist taps "Report Inaccessible / Unreachable". | Automated 10-minute waiting timer + SMS/Push notification sent to customer. | If customer does not appear after 10 mins, specialist cancels with explanation message. |
+| **Vehicle Inaccessible / Locked** | Specialist (On-site) | Specialist taps "Report Inaccessible / Unreachable". | Automated 10-minute waiting timer + SMS/Push notification sent to customer. | If customer does not appear after 10 mins, specialist requests cancellation with message for Admin approval. |
 | **Technician Van Breakdown** | Specialist | Specialist flags emergency: "Equipment / Van Breakdown". | Order status $\rightarrow$ `DISPATCH_ISSUE`. Customer offered immediate reassignment or reschedule. | Ops dashboard receives audible alarm; 1-click reassignment to nearest specialist. |
 | **On-Site Service Upsell** | Customer / Specialist | Specialist proposes extra treatment $\rightarrow$ `AWAITING_CUSTOMER_CONFIRMATION`. | Real-time modal appears on customer app with price delta. | Specialist cannot start extra service until customer taps "Accept". |
 
 > [!IMPORTANT]
-> **Arrival Prerequisite Rule**: Specialists **cannot** cancel an order while in `ASSIGNED`, `ACKNOWLEDGED`, or `EN_ROUTE` states. The **"Cancel Order"** action is only unlocked in the Specialist Mobile App **after tapping "I Have Arrived"** (`status = ARRIVED`) and verifying field conditions on-site. If an issue occurs before arrival (e.g. breakdown), it is handled via Ops Dispatch reassignment.
+> **Arrival & Admin Approval Prerequisite**: 
+> 1. Specialists **cannot** request cancellation while in `ASSIGNED`, `ACKNOWLEDGED`, or `EN_ROUTE` states. The request action is only unlocked **after tapping "I Have Arrived"** (`status = ARRIVED`).
+> 2. Specialist cancellation is **never instant** — it submits a cancellation request with reason message to the Admin Ops Console.
+> 3. Admin Ops reviews the reason and clicks **"Approve Cancellation"**, transitioning the order to `CANCELLED_BY_SPECIALIST` and freeing the specialist back to `AVAILABLE`.
 
 ---
 
-## 2. Specialist Order Cancellation Workflow
+## 2. Specialist Cancellation & Admin Approval Workflow
 
 ```mermaid
 sequenceDiagram
@@ -30,22 +33,27 @@ sequenceDiagram
     actor Cust as 👤 Customer
     participant App as 📱 Specialist App
     participant API as ⚙️ Backend Core
-    participant Ops as 👨‍💼 Ops Dashboard
+    participant Ops as 👨‍💼 Admin Ops Console
 
-    Note over Spec: Arrives at location, car is locked / inaccessible / weather hazard
-    Spec->>App: Taps "Cancel Order"
-    Spec->>App: Enters mandatory cancellation reason (e.g. "Basement gate locked, security denied access")
-    App->>API: POST /api/v1/specialist/orders/{id}/cancel {cancellation_reason: "..."}
+    Note over Spec: Arrives on-site (status = ARRIVED), vehicle inaccessible / customer unreachable
+    Spec->>App: Taps "Request Order Cancellation"
+    Spec->>App: Enters mandatory reason (e.g. "Basement gate locked, building security denied entry")
+    App->>API: POST /api/v1/specialist/orders/{id}/cancel-request {cancellation_reason: "..."}
+    
+    API->>API: Order Status -> CANCELLATION_REQUESTED
+    API-->>Ops: WebSocket 'admin:order:cancellation_requested' (High-Priority Alert & Reason)
+    App-->>Spec: "Cancellation requested. Awaiting Admin confirmation..."
+    
+    Note over Ops: Admin reviews reason message & coordinates if needed
+    Ops->>API: POST /api/v1/admin/orders/{id}/approve-cancellation
     
     API->>API: Updates Order Status -> CANCELLED_BY_SPECIALIST (0 Fee)
     API->>API: Sets Specialist Status -> AVAILABLE
     
-    par Real-Time Notifications
-        API-->>Cust: Push & SMS: "Your order was cancelled: [Reason]"
-        API-->>Ops: WebSocket 'admin:order:cancelled' (Logs specialist message)
+    par Real-Time Confirmations
+        API-->>Spec: Push: "Cancellation approved. You are now available for new orders."
+        API-->>Cust: Push & SMS: "Your order has been cancelled: [Specialist Reason]"
     end
-    
-    App-->>Spec: "Order cancelled successfully. Ready for next dispatch."
 ```
 
 ---
