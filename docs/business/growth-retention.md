@@ -31,7 +31,19 @@ graph TD
 
 ---
 
-## 2. Loyalty Points System
+## 2. Multi-Car Tiered Order Incentive
+
+To drive higher Average Order Value (AOV) and capitalize on residential villas in Dubai where families own multiple vehicles, the system applies an automatic multi-car discount without needing a coupon code:
+
+| Vehicle Position | Applicable Base Discount | Rationale |
+| :--- | :---: | :--- |
+| **1st Vehicle** | **0% (Standard Rate)** | Standard dispatch & travel costs amortized. |
+| **2nd Vehicle** | **15% Off Base Service** | Zero extra specialist travel or fuel overhead. |
+| **3rd+ Vehicle** | **20% Off Base Service** | Maximum labor utilization on a single site. |
+
+---
+
+## 3. Loyalty Points System
 
 Designed to incentivize repeat bookings and increase customer lifetime value (LTV):
 
@@ -46,7 +58,7 @@ Designed to incentivize repeat bookings and increase customer lifetime value (LT
 
 ---
 
-## 3. Referral Program ("Give & Get")
+## 4. Referral Program (Two-Sided Incentive)
 
 A viral customer acquisition loop built into the mobile app:
 

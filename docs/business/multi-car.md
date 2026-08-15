@@ -25,12 +25,17 @@ graph TD
 3. **Choose Add-ons**: Customer selects optional enhancements (e.g. *Tire Gel Shine*, *AC Ozone Shot*). All add-ons carry a **universal flat rate** regardless of car type.
 4. **Order Creation**: A single master order with individual vehicle items is created.
 
-### Key Operational Rules:
-1. **Sequential Field Execution**:
+### Key Operational Rules & Multi-Car Incentives:
+1. **Automatic Multi-Car Tiered Discount**:
+   - Because the specialist is already at the location with zero additional travel/fuel overhead, an automated platform discount applies across vehicles in the same booking:
+     - **Vehicle 1**: Standard Base Price (100%)
+     - **Vehicle 2**: **15% Discount** on base service rate
+     - **Vehicle 3+**: **20% Discount** on base service rate
+2. **Sequential Field Execution**:
    - A single assigned specialist washes the vehicles **one by one in sequence**.
    - Total service time is calculated cumulatively:
      $$\text{Total Duration} = \sum_{i=1}^{N} \left( \text{Duration}(\text{Service}_i, \text{CarType}_i) + \sum \text{Duration}(\text{Addon}_j) \right)$$
-2. **Sequential Multi-Car Execution**:
+3. **Sequential Multi-Car Execution**:
    - Vehicles are detailed sequentially with dedicated start/complete markers per vehicle item.
 
 ---

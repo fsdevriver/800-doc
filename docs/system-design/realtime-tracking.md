@@ -112,8 +112,46 @@ When a customer requests an extra detailing service on-site:
 3. Customer taps "Accept" $\rightarrow$ Emits `order:upsell:accepted`.
 4. Invoice and specialist app reflect the updated order total in real time.
 
-### B. In-App Direct Chat & Call Masking
-- Integrated real-time messaging room (`room:order:{order_id}:chat`) allowing the customer and technician to communicate parking gate codes or apartment directions without exposing personal phone numbers.
-
 ### C. Live No-Show Grace Period Countdown
 - If a vehicle is locked, specialist taps "Report Inaccessible" $\rightarrow$ A synchronized 10-minute countdown timer broadcasts to both Customer App and Admin Dashboard via WebSockets.
+
+---
+
+## 5. Offline-First Underground & Basement Parking Telemetry
+
+In high-density Dubai districts (Downtown, DIFC, Marina, Business Bay), underground basement parking lots (P1 to B4) frequently experience total cellular blackouts. The Specialist Mobile App is built with an **Offline-First Synchronous Store & Forward Queue**:
+
+```mermaid
+graph LR
+    subgraph SpecialistApp["Specialist Mobile App (Basement P3)"]
+        ACTION["Specialist Taps 'Start Wash' or 'Complete Wash'"]
+        LOCAL_DB["💾 Local SQLite / WatermelonDB Queue"]
+        NET_MON["📡 Network Connectivity Monitor (NetInfo)"]
+    end
+
+    subgraph CloudSync["Backend Gateway (When Online)"]
+        API["⚙️ NestJS Ingestion Gateway"]
+        DB["🐘 PostgreSQL 17 Master"]
+    end
+
+    ACTION -->|1. Offline Write| LOCAL_DB
+    NET_MON -->|2. Detects 4G/5G Network Restored| LOCAL_DB
+    LOCAL_DB -->|3. Flushes Idempotent Event Queue with Device Timestamps| API
+    API -->|4. Reconciles State| DB
+```
+
+1. **Trusted Device Timestamping**: Every offline action generates an immutable ISO timestamp and cryptographic UUID locally.
+2. **Deterministic Order Reconciliation**: When the technician exits the basement parking structure and reconnects to 4G/5G, the app flushes pending actions in chronological order with idempotent headers.
+
+---
+
+## 6. Multi-Channel WhatsApp & Novu Notification Strategy
+
+Given UAE customer communication preferences where **WhatsApp open rates exceed 95%**, Novu orchestrates automated multi-channel messaging:
+
+| Event Trigger | Primary Channel | Fallback Channel | Payload / Template |
+| :--- | :--- | :--- | :--- |
+| **Specialist En-Route** | 💬 **WhatsApp Notification** | 🔔 Push Notification | *"Your 800-CarWash specialist Ahmed is on the way! Track live: https://800carwash.ae/t/800-092"* |
+| **Specialist Arrived** | 💬 **WhatsApp Notification** | 🔔 Push Notification | *"Specialist has arrived at your villa/parking spot."* |
+| **Service Completed** | 💬 **WhatsApp Notification** | ✉️ Transactional Email | *"Your vehicle detailing is complete! View inspection & PDF Tax Invoice attached."* |
+| **Auth Verification OTP** | 📱 **SMS Gateway** | 💬 WhatsApp OTP | *"Your 800-CarWash login code is 849201. Valid for 5 minutes."* |
