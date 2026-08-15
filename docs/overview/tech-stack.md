@@ -16,6 +16,7 @@ The 800-CarWash platform leverages a modern, enterprise-grade, high-performance 
 | **Admin UI Framework** | Tailwind CSS + Shadcn UI | `Tailwind v4.x` | Clean, responsive, dark/light accessible UI system with Radix UI primitives. |
 | **Mobile Applications** | React Native | `v0.77+` | Cross-platform (iOS & Android) with New Architecture (Fabric & TurboModules), single codebase efficiency. |
 | **Mobile OTA Updates** | Expo Updates / CodePush | EAS Update / Self-hosted OTA | Over-the-Air instant JavaScript bundle & asset delivery without App Store / Play Store review cycles. |
+| **UAE Map & Geocoding**| MapLibre + TileServer + Photon | OpenStreetMap UAE Extract | Zero-cost self-hosted vector map tiles, address autocomplete search, reverse geocoding & OSRM routing. |
 | **Real-Time Gateway** | Socket.io | `v4.8+` | Bidirectional low-latency WebSocket connection with Redis adapter for horizontal scaling. |
 | **Object Storage** | Amazon S3 / MinIO | S3 API Standard | Secure, encrypted bucket storage for mandatory before/after vehicle inspection photos. |
 | **Push Notifications** | Firebase Cloud Messaging (FCM) | HTTP v1 API | High-reliability background and foreground push notification delivery to iOS & Android clients. |
