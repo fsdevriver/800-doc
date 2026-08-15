@@ -10,29 +10,30 @@ This document details the operational workflow, inspection gates, and field inte
 graph TD
     A["1. Staff Login & Shift Toggle (Active)"] --> B["2. Order Dispatched by Admin"]
     B --> C["3. Review Job Details (Vehicles, Gate Codes, Address)"]
-    C --> D["4. Tap 'Start Journey' (GPS Telemetry Stream Starts)"]
+    C --> D["4. Tap 'Acknowledge Order' (Ops Admin Notified)"]
+    D --> E["5. Tap 'Start Journey' (GPS Telemetry Stream Starts)"]
     
-    D --> E["5. Turn-by-Turn Navigation to Location"]
-    E --> F["6. Tap 'I Have Arrived'"]
+    E --> F["6. Turn-by-Turn Navigation to Location"]
+    F --> G["7. Tap 'I Have Arrived'"]
     
-    F --> G{"Vehicle Accessible?"}
-    G -->|No / Locked| H["7. Trigger 'Report Inaccessible' (10-min Timer)"]
-    H -->|Customer Arrives| I["8. Select Vehicle 1"]
-    H -->|Timeout Exceeded| J["❌ Cancelled No-Show (Ops Alert)"]
+    G --> H{"Vehicle Accessible?"}
+    H -->|No / Locked| I["8. Trigger 'Report Inaccessible' (10-min Timer)"]
+    I -->|Customer Arrives| J["9. Select Vehicle 1"]
+    I -->|Timeout Exceeded| K["❌ Cancelled No-Show (Ops Alert)"]
     
-    G -->|Yes| I
-    I --> K["9. Capture 4 'Before Wash' Photos"]
-    K --> L["10. Tap 'Start Wash'"]
-    L --> M["11. Detail Vehicle"]
-    M --> N["12. Capture 4 'After Wash' Photos"]
-    N --> O["13. Tap 'Complete Wash (Car 1)'"]
+    H -->|Yes| J
+    J --> L["10. Capture 4 'Before Wash' Photos"]
+    L --> M["11. Tap 'Start Wash'"]
+    M --> N["12. Detail Vehicle"]
+    N --> O["13. Capture 4 'After Wash' Photos"]
+    O --> P["14. Tap 'Complete Wash (Car 1)'"]
     
-    O --> P{"Remaining Cars in Order?"}
-    P -->|Yes| Q["14. Select Next Vehicle"]
-    Q --> K
+    P --> Q{"Remaining Cars in Order?"}
+    Q -->|Yes| R["15. Select Next Vehicle"]
+    R --> L
     
-    P -->|No| R["15. Collect Payment (Cash / POS Card)"]
-    R --> S["16. Tap 'Complete Job' (Status -> Available)"]
+    Q -->|No| S["16. Collect Payment (Cash / POS Card)"]
+    S --> T["17. Tap 'Complete Job' (Status -> Available)"]
 ```
 
 ---

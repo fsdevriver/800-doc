@@ -32,6 +32,21 @@ Updates current shift state.
 ### `GET /api/v1/specialist/orders/active`
 Fetches currently assigned order details, vehicle list, and customer parking instructions.
 
+### `POST /api/v1/specialist/orders/{id}/acknowledge`
+Specialist confirms review and comprehension of job instructions (gate codes, car count, location). Emits real-time WebSocket event `order:acknowledged` to Admin Operations console.
+```json
+// Response: 200 OK
+{
+  "success": true,
+  "data": {
+    "order_id": "8f3b2c1a-5d4e-4f6a-9b8c-1e2d3f4a5b6c",
+    "status": "ACKNOWLEDGED",
+    "acknowledged_at": "2026-08-16T08:15:30.000Z",
+    "message": "Order acknowledged successfully. Admin notified."
+  }
+}
+```
+
 ### `POST /api/v1/specialist/orders/{id}/start-journey`
 Transitions order to `EN_ROUTE` and initiates background GPS telemetry.
 

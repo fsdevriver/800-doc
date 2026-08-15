@@ -53,6 +53,7 @@ const socket: Socket = io("https://api.800carwash.ae", {
 | :--- | :---: | :--- | :--- |
 | `admin:fleet:location_stream`| Server $\rightarrow$ Client | `Array<{ specialist_id: string, lat: number, lng: number, status: string }>` | Master fleet stream for Dubai Live Dispatch Board. |
 | `admin:order:new_created` | Server $\rightarrow$ Client | `{ order_id: string, order_type: string, sub_zone_id: string, total: number }` | Triggers visual & sound alert on Dispatch Console. |
+| `admin:order:acknowledged` | Server $\rightarrow$ Client | `{ order_id: string, specialist_id: string, acknowledged_at: string }` | Notifies Ops dispatcher that specialist reviewed & accepted instructions. |
 | `admin:order:exception` | Server $\rightarrow$ Client | `{ order_id: string, exception_type: "NO_SHOW" \| "VEHICLE_BREAKDOWN" }` | Urgent dispatcher alert for reassignment. |
 
 ---

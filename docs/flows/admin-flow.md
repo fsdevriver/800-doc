@@ -19,6 +19,7 @@ graph TD
 
     C --> I["3. Direct 1-Click Order Assignment to Specialist"]
     I --> J["4. Instant Push Notification to Specialist App"]
+    J --> K["5. Specialist Acknowledges Order (Live Status Badge -> ACKNOWLEDGED)"]
 ```
 
 ---
