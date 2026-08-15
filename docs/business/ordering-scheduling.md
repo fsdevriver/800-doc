@@ -83,7 +83,5 @@ graph TD
     PP --> CP["7. COMPLETED<br/>(Cash / POS recorded, invoice emailed)"]
 
     AS -->|Customer Cancels| CC["CANCELLED_BY_CUSTOMER<br/>(0% Fee)"]
-    AS -->|Specialist Cancels with Reason| CS["CANCELLED_BY_SPECIALIST<br/>(0% Fee / Reason Logged)"]
-    ER -->|Specialist Cancels with Reason| CS
-    AR -->|Specialist Cancels with Reason| CS
+    AR -->|Specialist Cancels on-site with Reason| CS["CANCELLED_BY_SPECIALIST<br/>(Only permitted after ARRIVED)"]
 ```

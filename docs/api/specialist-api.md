@@ -54,7 +54,9 @@ Transitions order to `EN_ROUTE` and initiates background GPS telemetry.
 Transitions order to `ARRIVED` upon reaching customer coordinates.
 
 ### `POST /api/v1/specialist/orders/{id}/cancel`
-Specialist cancels order due to physical field constraints (locked gate, customer unreachable, severe weather). Requires a clear explanatory message.
+Specialist cancels order due to physical field constraints (locked gate, customer unreachable, severe weather).
+- **Enforced Guardrail**: Can **ONLY** be executed when `order.status === 'ARRIVED'`. Calls made during `ASSIGNED`, `ACKNOWLEDGED`, or `EN_ROUTE` will be rejected with `400 Bad Request`.
+- Requires a non-empty `cancellation_reason` message.
 ```json
 // Request Body
 {

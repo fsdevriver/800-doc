@@ -10,11 +10,14 @@ In a mobile on-demand detailing operation, physical field anomalies (locked gate
 
 | Operational Scenario | Initiated By | System Trigger / Action | Customer Impact | Specialist & Ops Action |
 | :--- | :--- | :--- | :--- | :--- |
-| **Specialist Cancellation (Field Obstacle)** | Specialist | `POST /api/v1/specialist/orders/{id}/cancel` with explanation message. | Order status $\rightarrow$ `CANCELLED_BY_SPECIALIST`. Push notification explaining reason. | **0% Penalty**. Specialist is immediately freed to `AVAILABLE`. Ops admin notified. |
-| **Customer Cancellation** | Customer | Customer cancels order from app. | Order status $\rightarrow$ `CANCELLED_BY_CUSTOMER`. **0% Penalty**. | Specialist freed back to `AVAILABLE`. |
-| **Vehicle Inaccessible / Locked** | Specialist | Specialist taps "Report Inaccessible / Unreachable". | Automated 10-minute waiting timer + SMS/Push notification sent to customer. | If customer does not appear, specialist cancels with explanation message. |
+| **Specialist On-Site Cancellation** | Specialist (Only after `ARRIVED`) | `POST /api/v1/specialist/orders/{id}/cancel` with explanation message. | Order status $\rightarrow$ `CANCELLED_BY_SPECIALIST`. Push notification explaining reason. | **0% Penalty**. Specialist is freed to `AVAILABLE`. **Cannot cancel before arriving on-site**. |
+| **Customer Cancellation** | Customer | Customer cancels order from app before service starts. | Order status $\rightarrow$ `CANCELLED_BY_CUSTOMER`. **0% Penalty**. | Specialist freed back to `AVAILABLE`. |
+| **Vehicle Inaccessible / Locked** | Specialist (On-site) | Specialist taps "Report Inaccessible / Unreachable". | Automated 10-minute waiting timer + SMS/Push notification sent to customer. | If customer does not appear after 10 mins, specialist cancels with explanation message. |
 | **Technician Van Breakdown** | Specialist | Specialist flags emergency: "Equipment / Van Breakdown". | Order status $\rightarrow$ `DISPATCH_ISSUE`. Customer offered immediate reassignment or reschedule. | Ops dashboard receives audible alarm; 1-click reassignment to nearest specialist. |
 | **On-Site Service Upsell** | Customer / Specialist | Specialist proposes extra treatment $\rightarrow$ `AWAITING_CUSTOMER_CONFIRMATION`. | Real-time modal appears on customer app with price delta. | Specialist cannot start extra service until customer taps "Accept". |
+
+> [!IMPORTANT]
+> **Arrival Prerequisite Rule**: Specialists **cannot** cancel an order while in `ASSIGNED`, `ACKNOWLEDGED`, or `EN_ROUTE` states. The **"Cancel Order"** action is only unlocked in the Specialist Mobile App **after tapping "I Have Arrived"** (`status = ARRIVED`) and verifying field conditions on-site. If an issue occurs before arrival (e.g. breakdown), it is handled via Ops Dispatch reassignment.
 
 ---
 
