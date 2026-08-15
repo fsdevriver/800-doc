@@ -20,7 +20,9 @@ graph TD
 ---
 
 ## 2. On-Demand Booking Flow
+
 On-Demand orders are designed for instant doorstep fulfillment:
+
 1. **Specialist Availability Check**:
     - If specialists in the sub-zone are in `AVAILABLE` state, the order displays an estimated arrival time of **20–30 minutes**.
     - If all specialists in the zone are currently `WASHING` or `EN_ROUTE`, the system calculates a dynamic ETA based on when the earliest job completes + travel time (e.g. ~45–60 mins).
@@ -30,7 +32,9 @@ On-Demand orders are designed for instant doorstep fulfillment:
 ---
 
 ## 3. Scheduled Start-Time Slots
+
 Scheduled bookings allow customers to plan ahead with precision:
+
 - **Slot Granularity**: Configured by Admin with exact start times (e.g., `08:00 AM`, `09:00 AM`, `10:00 AM`, ..., `08:00 PM`).
 - **Slot Capacity Management**:
     - Each sub-zone has an Admin-configured capacity per slot (e.g., `capacity = 4`).
