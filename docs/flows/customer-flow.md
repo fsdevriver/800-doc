@@ -29,7 +29,7 @@ graph TD
     M -->|Inside| O["11. Step 6: Checkout & Order Creation (COD / POS)"]
     
     O --> P["12. Order Dispatched to Specialist"]
-    P --> Q["13. Real-Time Tracking & Inspection Photos"]
+    P --> Q["13. Real-Time Tracking & Live Washing Progress"]
     Q --> R["14. Wash Complete & Payment Settlement"]
     R --> S["15. Rating, Tip & Digital Invoice"]
 ```

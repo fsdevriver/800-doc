@@ -23,26 +23,24 @@ graph TD
     K --> K2["10. Admin Ops Approves Cancellation (Status -> Available)"]
     
     H -->|Yes| J
-    J --> L["10. Capture 4 'Before Wash' Photos"]
-    L --> M["11. Tap 'Start Wash'"]
-    M --> N["12. Detail Vehicle"]
-    N --> O["13. Capture 4 'After Wash' Photos"]
-    O --> P["14. Tap 'Complete Wash (Car 1)'"]
+    J --> K3["10. Tap 'Start Wash'"]
+    K3 --> L["11. Detail Vehicle"]
+    L --> M["12. Tap 'Complete Wash (Car 1)'"]
     
-    P --> Q{"Remaining Cars in Order?"}
-    Q -->|Yes| R["15. Select Next Vehicle"]
-    R --> L
+    M --> N{"Remaining Cars in Order?"}
+    N -->|Yes| O["13. Select Next Vehicle"]
+    O --> K3
     
-    Q -->|No| S["16. Collect Payment (Cash / POS Card)"]
-    S --> T["17. Tap 'Complete Job' (Status -> Available)"]
+    N -->|No| P["14. Collect Payment (Cash / POS Card)"]
+    P --> Q["15. Tap 'Complete Job' (Status -> Available)"]
 ```
 
 ---
 
-## 2. Mandatory Inspection Photo Gate
+## 2. Streamlined Service Execution
 
-The mobile application enforces strict software validation:
+The specialist workflow prioritizes speed and operational simplicity:
 
-1. The **"Start Wash"** button remains disabled until 4 distinct "Before Wash" photos are captured and confirmed uploaded to S3.
-2. The **"Complete Wash"** button remains disabled until 4 corresponding "After Wash" photos are captured and verified.
-3. If pre-existing scratch or paint damage is identified, the specialist can take a flagged **"Damage Note"** photo to protect the platform from liability.
+1. **Instant Wash Activation**: Specialist selects the vehicle and taps **"Start Wash"** to begin detailing.
+2. **Wash Completion**: Once finished, tapping **"Complete Wash"** advances the car to completed state.
+3. **Future Roadmap**: Media capture and inspection photo gates are scheduled for a future version release.

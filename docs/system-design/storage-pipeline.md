@@ -1,10 +1,11 @@
-# Storage & Media Pipeline
+# Storage & Media Pipeline (Future Release Specification)
 
-Quality assurance in 800-CarWash mandates capturing 2–4 "Before Wash" and 2–4 "After Wash" inspection photos per vehicle. The media pipeline is designed to be scalable, cost-efficient, and secure.
+> [!NOTE]
+> **Version Scope**: In the current production release, vehicle inspection photo capture is disabled to streamline field execution times. The media storage architecture below is prepared for future version deployment.
 
 ---
 
-## 1. Direct-to-S3 Pre-Signed Upload Architecture
+## 1. Direct-to-S3 Pre-Signed Upload Architecture (Planned)
 
 To minimize backend server load and memory spikes, mobile clients upload high-resolution inspection photos **directly to Amazon S3** using cryptographically signed pre-signed URLs.
 

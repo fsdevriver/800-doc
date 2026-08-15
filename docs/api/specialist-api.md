@@ -79,7 +79,10 @@ Specialist requests order cancellation on-site due to physical field constraints
 
 ---
 
-## 3. Vehicle Quality Inspection & Photos
+## 3. Vehicle Quality Inspection & Photos (Future Version)
+
+> [!NOTE]
+> Photo upload endpoints are reserved for a future version release and are disabled in the initial production release.
 
 ### `POST /api/v1/media/presign-upload`
 Generates signed S3 URLs for direct photo uploads.

@@ -30,9 +30,8 @@ graph TD
    - A single assigned specialist washes the vehicles **one by one in sequence**.
    - Total service time is calculated cumulatively:
      $$\text{Total Duration} = \sum_{i=1}^{N} \left( \text{Duration}(\text{Service}_i, \text{CarType}_i) + \sum \text{Duration}(\text{Addon}_j) \right)$$
-2. **Per-Vehicle Inspection Quality Gates**:
-   - The specialist must capture 2–4 "Before" and 2–4 "After" photos **for each individual vehicle item**.
-   - Vehicle 1 cannot be marked finished without its photos; Vehicle 2 must have its own separate photo set.
+2. **Sequential Multi-Car Execution**:
+   - Vehicles are detailed sequentially with dedicated start/complete markers per vehicle item.
 
 ---
 
@@ -44,7 +43,6 @@ sequenceDiagram
     actor Spec as 🧑‍🔧 Specialist
     participant App as 📱 Specialist App
     participant API as ⚙️ Backend Core
-    participant S3 as ☁️ S3 Storage
 
     Note over Spec, App: Specialist arrives at location with 2 cars booked
     Spec->>App: Taps "I Have Arrived"
@@ -52,25 +50,17 @@ sequenceDiagram
     
     Note over Spec, App: --- VEHICLE 1 EXECUTION (Sedan) ---
     Spec->>App: Selects Vehicle 1 (BMW 3 Series)
-    Spec->>App: Takes 4 "Before Wash" Photos
-    App->>S3: Uploads Before Photos
     Spec->>App: Taps "Start Wash (Car 1)"
     App->>API: POST /api/v1/orders/{id}/items/{item1_id}/start
     Note over Spec: Performs washing on Car 1
-    Spec->>App: Takes 4 "After Wash" Photos
-    App->>S3: Uploads After Photos
     Spec->>App: Taps "Complete Wash (Car 1)"
     App->>API: POST /api/v1/orders/{id}/items/{item1_id}/complete
 
     Note over Spec, App: --- VEHICLE 2 EXECUTION (SUV) ---
     Spec->>App: Selects Vehicle 2 (Range Rover)
-    Spec->>App: Takes 4 "Before Wash" Photos
-    App->>S3: Uploads Before Photos
     Spec->>App: Taps "Start Wash (Car 2)"
     App->>API: POST /api/v1/orders/{id}/items/{item2_id}/start
     Note over Spec: Performs washing on Car 2
-    Spec->>App: Takes 4 "After Wash" Photos
-    App->>S3: Uploads After Photos
     Spec->>App: Taps "Complete Wash (Car 2)"
     App->>API: POST /api/v1/orders/{id}/items/{item2_id}/complete
 
