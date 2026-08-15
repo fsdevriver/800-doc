@@ -1,10 +1,11 @@
 site_name: 800-CarWash Engineering Architecture & System Design
 site_description: Enterprise Architecture, Business Requirements, API Specifications, Database Schema, and Operations Runbook for 800-CarWash On-Demand Platform.
 site_author: 800-CarWash Engineering Team
-site_url: https://docs.800carwash.ae/
+site_url: https://fsdevriver.github.io/800-doc/
 
-repo_name: 800carwash/platform-docs
-repo_url: https://github.com/800carwash/platform-docs
+repo_name: fsdevriver/800-doc
+repo_url: https://github.com/fsdevriver/800-doc
+edit_uri: edit/main/docs/
 
 theme:
   name: material
