@@ -99,7 +99,7 @@ nav:
       - Multi-Car Architecture: business/multi-car.md
       - Subscriptions Module: business/subscriptions.md
       - Growth & Retention (Promos, Loyalty, Referrals): business/growth-retention.md
-      - Operational Exceptions & Penalties: business/exception-matrix.md
+      - Operational Exceptions & Cancellations: business/exception-matrix.md
   - System Design:
       - High-Level C4 Architecture: system-design/c4-architecture.md
       - Real-Time & WebSockets: system-design/realtime-tracking.md

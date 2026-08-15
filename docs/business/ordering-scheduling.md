@@ -82,7 +82,8 @@ graph TD
     WS --> PP["6. PAYMENT_PENDING<br/>(After Photos uploaded & wash completed)"]
     PP --> CP["7. COMPLETED<br/>(Cash / POS recorded, invoice emailed)"]
 
-    AS -->|Cancelled before journey| CC["CANCELLED_BY_CUSTOMER<br/>(No penalty)"]
-    ER -->|Cancelled during journey| CPEN["CANCELLED_WITH_PENALTY<br/>(Penalty flagged)"]
-    AR -->|10 min timer expired| CNOT["CANCELLED_NO_SHOW<br/>(Vehicle locked / unreachable)"]
+    AS -->|Customer Cancels| CC["CANCELLED_BY_CUSTOMER<br/>(0% Fee)"]
+    AS -->|Specialist Cancels with Reason| CS["CANCELLED_BY_SPECIALIST<br/>(0% Fee / Reason Logged)"]
+    ER -->|Specialist Cancels with Reason| CS
+    AR -->|Specialist Cancels with Reason| CS
 ```

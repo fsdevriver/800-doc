@@ -17,9 +17,9 @@ graph TD
     F --> G["7. Tap 'I Have Arrived'"]
     
     G --> H{"Vehicle Accessible?"}
-    H -->|No / Locked| I["8. Trigger 'Report Inaccessible' (10-min Timer)"]
+    H -->|No / Locked / Unreachable| I["8. Trigger 'Report Inaccessible' (10-min Timer)"]
     I -->|Customer Arrives| J["9. Select Vehicle 1"]
-    I -->|Timeout Exceeded| K["❌ Cancelled No-Show (Ops Alert)"]
+    I -->|Timeout Exceeded / Inaccessible| K["❌ Specialist Cancels Order with Reason Message (Status -> Available)"]
     
     H -->|Yes| J
     J --> L["10. Capture 4 'Before Wash' Photos"]

@@ -34,7 +34,6 @@ Extended profile for vehicle owners.
 | `loyalty_points_balance` | `INTEGER` | `NOT NULL, DEFAULT 0` | Current available loyalty points. |
 | `referral_code` | `VARCHAR(20)` | `UNIQUE, NOT NULL` | Unique sharing code (e.g., `ALICE800`). |
 | `referred_by_id` | `UUID` | `FK -> customer_profiles(id), NULLABLE` | Profile of referring customer. |
-| `has_penalty_flag` | `BOOLEAN` | `NOT NULL, DEFAULT FALSE` | Flagged if cancelled en-route or no-show. |
 
 ---
 

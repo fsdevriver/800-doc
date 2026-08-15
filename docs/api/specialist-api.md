@@ -53,6 +53,27 @@ Transitions order to `EN_ROUTE` and initiates background GPS telemetry.
 ### `POST /api/v1/specialist/orders/{id}/arrive`
 Transitions order to `ARRIVED` upon reaching customer coordinates.
 
+### `POST /api/v1/specialist/orders/{id}/cancel`
+Specialist cancels order due to physical field constraints (locked gate, customer unreachable, severe weather). Requires a clear explanatory message.
+```json
+// Request Body
+{
+  "cancellation_reason": "Basement security gate locked; customer phone unreachable for 10 minutes."
+}
+
+// Response: 200 OK
+{
+  "success": true,
+  "data": {
+    "order_id": "8f3b2c1a-5d4e-4f6a-9b8c-1e2d3f4a5b6c",
+    "status": "CANCELLED_BY_SPECIALIST",
+    "cancellation_reason": "Basement security gate locked; customer phone unreachable for 10 minutes.",
+    "cancelled_at": "2026-08-16T08:35:10.000Z",
+    "specialist_status": "AVAILABLE"
+  }
+}
+```
+
 ---
 
 ## 3. Vehicle Quality Inspection & Photos

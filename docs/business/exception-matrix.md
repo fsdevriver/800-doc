@@ -1,8 +1,8 @@
-# Operational Exceptions & Penalty Matrix
+# Operational Exceptions & Specialist Cancellation Matrix
 
-In a mobile on-demand detailing operation, physical field anomalies (locked gates, inaccessible underground parking, vehicle breakdowns, customer delays) are standard occurrences. 
+In a mobile on-demand detailing operation, physical field anomalies (locked gates, inaccessible underground parking, vehicle breakdowns, customer unreachable) are standard occurrences. 
 
-800-CarWash establishes deterministic protocols and system state transitions to handle these exceptions.
+800-CarWash establishes deterministic, zero-penalty protocols. If an order cannot proceed, the **specialist can cancel the order with a mandatory message** explaining the exact operational reason.
 
 ---
 
@@ -10,16 +10,15 @@ In a mobile on-demand detailing operation, physical field anomalies (locked gate
 
 | Operational Scenario | Initiated By | System Trigger / Action | Customer Impact | Specialist & Ops Action |
 | :--- | :--- | :--- | :--- | :--- |
-| **Pre-Journey Cancellation** | Customer | Order status $\rightarrow$ `CANCELLED_BY_CUSTOMER`. | Full cancellation. **0% Penalty**. | Specialist freed back to `AVAILABLE`. |
-| **En-Route Cancellation** | Customer | Order status $\rightarrow$ `CANCELLED_WITH_PENALTY`. | **Cancellation Penalty Flag** recorded on user profile. | Specialist compensated for travel time; freed to `AVAILABLE`. |
-| **Vehicle Inaccessible / Locked** | Specialist | Specialist taps "Vehicle Inaccessible / Customer Unreachable". | Automated 3-minute waiting timer + SMS/automated call trigger. | Specialist waits 10 minutes. If no access, Ops transitions to `CANCELLED_NO_SHOW`. |
-| **Customer No-Show (Post 10m)** | Ops / Specialist | Order status $\rightarrow$ `CANCELLED_NO_SHOW`. | Penalty fee flagged against customer account. | Specialist departs; order closed. |
-| **Technician Vehicle Breakdown** | Specialist | Specialist flags emergency: "Vehicle Issue". Order $\rightarrow$ `DISPATCH_ISSUE`. | Push notification offering immediate reassignment or reschedule. | Ops dashboard sounds audible alarm; 1-click reassignment to nearest technician. |
-| **On-Site Service Upsell** | Customer / Specialist | Specialist adds line items $\rightarrow$ `AWAITING_CUSTOMER_CONFIRMATION`. | Real-time modal appears on customer app with price delta. | Specialist cannot start extra service until customer taps "Accept". |
+| **Specialist Cancellation (Field Obstacle)** | Specialist | `POST /api/v1/specialist/orders/{id}/cancel` with explanation message. | Order status $\rightarrow$ `CANCELLED_BY_SPECIALIST`. Push notification explaining reason. | **0% Penalty**. Specialist is immediately freed to `AVAILABLE`. Ops admin notified. |
+| **Customer Cancellation** | Customer | Customer cancels order from app. | Order status $\rightarrow$ `CANCELLED_BY_CUSTOMER`. **0% Penalty**. | Specialist freed back to `AVAILABLE`. |
+| **Vehicle Inaccessible / Locked** | Specialist | Specialist taps "Report Inaccessible / Unreachable". | Automated 10-minute waiting timer + SMS/Push notification sent to customer. | If customer does not appear, specialist cancels with explanation message. |
+| **Technician Van Breakdown** | Specialist | Specialist flags emergency: "Equipment / Van Breakdown". | Order status $\rightarrow$ `DISPATCH_ISSUE`. Customer offered immediate reassignment or reschedule. | Ops dashboard receives audible alarm; 1-click reassignment to nearest specialist. |
+| **On-Site Service Upsell** | Customer / Specialist | Specialist proposes extra treatment $\rightarrow$ `AWAITING_CUSTOMER_CONFIRMATION`. | Real-time modal appears on customer app with price delta. | Specialist cannot start extra service until customer taps "Accept". |
 
 ---
 
-## 2. Inaccessible Vehicle & No-Show Protocol Flow
+## 2. Specialist Order Cancellation Workflow
 
 ```mermaid
 sequenceDiagram
@@ -30,23 +29,20 @@ sequenceDiagram
     participant API as ⚙️ Backend Core
     participant Ops as 👨‍💼 Ops Dashboard
 
-    Note over Spec: Arrives at location, car is locked or behind private security gate
-    Spec->>App: Taps "Report Inaccessible / Locked"
-    App->>API: POST /api/v1/specialist/orders/{id}/report-issue {reason: "LOCKED_GATE"}
-    API->>API: Starts 10-minute Grace Period Countdown
-    API-->>Cust: High-Priority Push & SMS: "Specialist is at your car. Please unlock vehicle."
+    Note over Spec: Arrives at location, car is locked / inaccessible / weather hazard
+    Spec->>App: Taps "Cancel Order"
+    Spec->>App: Enters mandatory cancellation reason (e.g. "Basement gate locked, security denied access")
+    App->>API: POST /api/v1/specialist/orders/{id}/cancel {cancellation_reason: "..."}
     
-    alt Customer arrives within 10 minutes
-        Cust->>Spec: Unlocks vehicle
-        Spec->>App: Taps "Issue Resolved -> Start Inspection"
-        App->>API: POST /api/v1/orders/{id}/resume
-    else 10-minute Timer Expires without response
-        API->>Ops: Alerts Ops Dispatcher: "No-Show Timeout Exceeded"
-        Ops->>API: POST /api/v1/admin/orders/{id}/cancel-no-show
-        API->>API: Flags Penalty Debit on Customer Account
-        API-->>Cust: Notification: "Order cancelled due to no-show"
-        API-->>Spec: "Job closed. You are now available for new orders."
+    API->>API: Updates Order Status -> CANCELLED_BY_SPECIALIST (0 Fee)
+    API->>API: Sets Specialist Status -> AVAILABLE
+    
+    par Real-Time Notifications
+        API-->>Cust: Push & SMS: "Your order was cancelled: [Reason]"
+        API-->>Ops: WebSocket 'admin:order:cancelled' (Logs specialist message)
     end
+    
+    App-->>Spec: "Order cancelled successfully. Ready for next dispatch."
 ```
 
 ---
