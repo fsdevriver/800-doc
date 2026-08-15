@@ -45,7 +45,7 @@ The central nervous system of 800-CarWash:
     - **Order & Pricing State Machine**: Validates car types, calculates prices based on base service + add-on matrices, checks daily/hourly slot capacities, and manages order lifecycle transitions.
     - **Real-Time Telemetry & Dispatch**: Broadcasts live specialist location updates, pushes state transitions via WebSockets (Socket.io) backed by Redis Pub/Sub.
     - **Asset Manager**: Generates pre-signed S3 URLs for direct client uploads of 2–4 inspection photos before/after service.
-    - **Invoicing & Communications**: Issues transactional emails with PDF tax invoices, coordinates SMS OTPs, and triggers FCM push notifications.
+    - **Invoicing & Communications**: Issues transactional emails with PDF tax invoices, coordinates SMS OTPs, and triggers Novu self-hosted push and in-app notifications.
 
 ---
 

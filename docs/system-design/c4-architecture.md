@@ -20,23 +20,23 @@ graph TD
         SYS["🚗 800-CarWash Core Ecosystem (API, Admin Web, Mobile Apps, Spatial Engine)"]
     end
 
-    subgraph ExtSystems["External Systems"]
-        FCM["🔔 Firebase Cloud Messaging (Push)"]
-        SMS_GW["📱 SMS Gateway (Twilio/Infobip)"]
-        MAIL_GW["📧 Email Service (SendGrid/SES)"]
-        S3_STO["☁️ AWS S3 Storage (Photos)"]
-        MAPS["🗺️ Google Maps API (Distance Matrix)"]
+    subgraph Ext["External & Self-Hosted Infrastructure"]
+        NOVU["🔔 Novu (Self-Hosted Notification Hub)"]
+        SMS["📱 SMS Gateway (Infobip / Twilio)"]
+        S3["☁️ AWS S3 / MinIO (Inspection Photos)"]
+        EMAIL["✉️ Transactional Email (SES / SendGrid)"]
+        UAE_MAP["🗺️ Self-Hosted UAE Map & Geocoder (TileServer / Photon)"]
     end
 
     CUST -->|Books, Tracks, Rates| SYS
     SPEC -->|Receives Jobs, Streams GPS, Uploads Photos| SYS
     ADMIN -->|Dispatches, Manages Catalog & Zones| SYS
 
-    SYS -->|Sends Push Notifications| FCM
-    SYS -->|Sends SMS OTP| SMS_GW
-    SYS -->|Delivers Invoices| MAIL_GW
-    SYS -->|Stores Inspection Photos| S3_STO
-    SYS -->|Calculates ETAs & Geocodes| MAPS
+    SYS -->|Dispatches Push & In-App Alerts| NOVU
+    SYS -->|Dispatches OTPs| SMS
+    SYS -->|Stores Inspection Photos| S3
+    SYS -->|Delivers Invoices| EMAIL
+    SYS -->|Calculates ETAs & Geocodes| UAE_MAP
 ```
 
 ---

@@ -25,7 +25,7 @@ graph TD
     end
 
     subgraph OutOfBand["Out-of-Band Real-Time Hub"]
-        FCM["🔔 Firebase Cloud Messaging (FCM)"]
+        NOVU["🔔 Novu Engine (Self-Hosted Push & In-App Alerts)"]
         SMS["📱 SMS Gateway (Twilio / Infobip)"]
     end
 
@@ -38,7 +38,7 @@ graph TD
     WS1 --- REDIS_GEO
     WS2 --- REDIS_GEO
 
-    WS1 --> FCM
+    WS1 --> NOVU
     WS2 --> SMS
 ```
 

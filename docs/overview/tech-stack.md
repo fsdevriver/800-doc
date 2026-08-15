@@ -19,7 +19,7 @@ The 800-CarWash platform leverages a modern, enterprise-grade, high-performance 
 | **UAE Map & Geocoding**| MapLibre + TileServer + Photon | OpenStreetMap UAE Extract | Zero-cost self-hosted vector map tiles, address autocomplete search, reverse geocoding & OSRM routing. |
 | **Real-Time Gateway** | Socket.io | `v4.8+` | Bidirectional low-latency WebSocket connection with Redis adapter for horizontal scaling. |
 | **Object Storage** | Amazon S3 / MinIO | S3 API Standard | Secure, encrypted bucket storage for mandatory before/after vehicle inspection photos. |
-| **Push Notifications** | Firebase Cloud Messaging (FCM) | HTTP v1 API | High-reliability background and foreground push notification delivery to iOS & Android clients. |
+| **Push Notifications** | Novu (Self-Hosted) | Open-Source Engine | Self-hosted notification infrastructure orchestrating mobile push (APNs/FCM), in-app inbox & workflows. |
 | **SMS & Auth OTP** | Twilio / Infobip API | REST API | Reliable phone number verification and OTP authentication for customer accounts. |
 | **Email Invoicing** | SendGrid / AWS SES | REST / SMTP | Transactional email delivery with attached PDF tax invoices and order confirmations. |
 
@@ -44,9 +44,9 @@ graph LR
         REDIS["Redis 7.4 Pub/Sub & Queues"]
     end
 
-    subgraph CloudServices["External Cloud Services"]
+    subgraph CloudServices["External & Self-Hosted Services"]
         S3["AWS S3 Bucket (Photos)"]
-        FCM["Firebase FCM (Push)"]
+        NOVU["Novu Engine (Self-Hosted Push & In-App)"]
         SMS["SMS Gateway (OTP)"]
         MAIL["Email Gateway (Invoices)"]
     end
@@ -58,7 +58,7 @@ graph LR
     GW --> PG
     GW --> REDIS
     GW --> S3
-    GW --> FCM
+    GW --> NOVU
     GW --> SMS
     GW --> MAIL
 ```
