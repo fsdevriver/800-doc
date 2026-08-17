@@ -92,9 +92,88 @@ graph TD
 | **`redis-cache`** | Redis 7.4 Alpine | Distributed locks, rate limiting, and BullMQ queues. | Isolated to internal Docker network. |
 
 ### Operational Advantages of Dokploy VPS Deployment:
-1. **Isolated Service Containers**: Every service (API, WebSocket gateway, worker, database, cache) runs in its own dedicated container, preventing background worker CPU spikes from impacting REST or WebSocket throughput.
-2. **Git Push-to-Deploy**: Linking the GitHub repository to Dokploy enables zero-downtime automated builds and rolling container restarts on every push to `main`.
-3. **Automated SSL/TLS**: Dokploy's integrated Traefik proxy handles automatic Let's Encrypt certificates and HTTP/2 routing for all subdomains.
-4. **Internal Network Security**: Database and cache ports (`5432`, `6379`) remain completely unexposed to the public internet, accessible only within the internal Docker bridge network.
+---
+
+## 4. Disaster Recovery (DR) & Business Continuity Architecture
+
+When operating on a dedicated VPS with Dokploy, business continuity is guaranteed through **automated off-site replication, point-in-time database recovery (PITR), and rapid cold-standby restoration procedures**.
+
+```mermaid
+graph TD
+    subgraph PrimaryNode["1. Primary Production VPS (Dokploy Node A)"]
+        PG["🐘 PostgreSQL 18 + PostGIS"]
+        REDIS["⚡ Redis 7.4 (AOF)"]
+        DOK["🐳 Dokploy App Containers"]
+    end
+
+    subgraph OffsiteStorage["2. Immutable Off-Site Backup Vault (AWS S3 / Backblaze B2)"]
+        WAL["📦 Continuous WAL-G / pgBackRest Stream (RPO < 5 mins)"]
+        NIGHTLY["💾 Nightly Encrypted DB Snapshots (02:00 UTC)"]
+        VOLS["📁 Dokploy Volume & Config Backups"]
+    end
+
+    subgraph StandbyNode["3. Cold-Standby VPS (Dokploy Node B - Ready for Spin-up)"]
+        STANDBY_DOK["🐳 Fresh Dokploy Instance"]
+        RESTORE["🔄 1-Click Disaster Recovery Script (RTO < 20 mins)"]
+    end
+
+    PG -->|Continuous WAL Archiving| WAL
+    PG -->|Daily pg_dumpall| NIGHTLY
+    DOK -->|Weekly Volume Sync| VOLS
+
+    WAL -.->|In Disaster: Stream to Standby| RESTORE
+    NIGHTLY -.->|In Disaster: Seed DB| RESTORE
+    VOLS -.->|Restore Configs| STANDBY_DOK
+    RESTORE --> STANDBY_DOK
+```
+
+### 1. RPO & RTO Targets
+
+| Disaster Metric | Target | Technical Mechanism |
+| :--- | :--- | :--- |
+| **Recovery Point Objective (RPO)** | **< 5 Minutes** | Continuous Write-Ahead Log (WAL) archiving via `WAL-G` or `pgBackRest` streamed to off-site S3 storage. Maximum potential data loss in catastrophic failure is $< 5$ minutes. |
+| **Recovery Time Objective (RTO)** | **< 20 Minutes** | Automated disaster restore script that provisions a fresh Dokploy node, restores the latest DB base backup + WAL replay, and switches DNS records. |
+
+---
+
+### 2. The 3-Tier Disaster Backup Strategy
+
+1. **Continuous PostgreSQL WAL Archiving**:
+   - PostgreSQL Write-Ahead Logs (`WAL`) are continuously compressed and pushed to an off-site S3 bucket every 60 seconds.
+   - Enables **Point-in-Time Recovery (PITR)** to restore the database to the exact second before an accidental drop or corruption.
+2. **Nightly Encrypted Full Database Dump**:
+   - Automated cron container runs `pg_dumpall | gzip | gpg` every night at `02:00 UTC` and syncs to off-site object storage with a 30-day retention policy.
+3. **Dokploy & Environment Volume Backups**:
+   - Dokploy compose definitions, `.env.production` secrets, and persistent volume metadata are backed up weekly to a secure private repository / vault.
+
+---
+
+### 3. Rapid Disaster Recovery Runbook (Step-by-Step)
+
+In the event of complete VPS loss (hardware destruction, host provider outage):
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ 🚨 DISASTER RECOVERY RESTORATION RUNBOOK                               │
+├────────────────────────────────────────────────────────────────────────┤
+│ Step 1: Provision a fresh VPS (Ubuntu 24.04 LTS) on any provider.      │
+│ Step 2: Install Docker & Dokploy (curl -sSL https://dokploy.com/...)   │
+│ Step 3: Connect Git repo & pull production environment variables.      │
+│ Step 4: Run restore script:                                            │
+│         wal-g backup-fetch /var/lib/postgresql/data LATEST             │
+│         wal-g wal-fetch ... (Replays WAL up to failure point)          │
+│ Step 5: Start Dokploy service containers (postgres, redis, apps).      │
+│ Step 6: Update Cloudflare / DNS A-records (api, ws, admin) to new IP.  │
+│ ⏱️ Total Elapsed Time: ~15 to 20 minutes                                │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 4. Failure Isolation & Graceful Degradation
+
+- **Transient Power Outage / Reboot**: All containers are configured with `restart: unless-stopped` and healthchecks. Dokploy automatically recovers all application and database containers within 45 seconds of host reboot.
+- **Disk Saturation Alert**: Automated disk space monitoring (via Dokploy alerting / Prometheus node-exporter) triggers warnings at 80% capacity to prevent database lockups.
+
 
 
