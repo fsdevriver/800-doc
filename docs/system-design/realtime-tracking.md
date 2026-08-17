@@ -77,7 +77,27 @@ sequenceDiagram
 
 ---
 
-## 3. Client Map Rendering & Animation Strategies
+## 3. Real-Time Telemetry Principles & Authoritative Snapshot Rule
+
+To prevent state desynchronization when clients disconnect, 800-CarWash enforces a strict separation between authoritative snapshots and transient real-time streams:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ REST API  = Authoritative State Snapshot (Source of Truth)│
+│ WebSocket = Incremental Ephemeral Updates (Live Feed)    │
+│ Redis GEO = Ephemeral Telemetry Cache (Latest Coordinates)│
+└──────────────────────────────────────────────────────────┘
+```
+
+1. **Authoritative Reconnect Protocol**:
+   - When the Customer or Specialist App resumes from background or reconnects after a signal blackout, it **must never assume pub/sub caught all missed events**.
+   - The app immediately issues `GET /api/v1/orders/:id` (and `GET /api/v1/orders/:id/location`) to synchronize the authoritative master state.
+   - The WebSocket stream then smoothly resumes receiving incremental delta updates.
+
+2. **GPS Telemetry Storage Policy**:
+   - High-frequency GPS coordinates (emitted every 5–10 seconds) are written **exclusively to Redis Geospatial cache** (`GEOADD specialists:active lng lat specialist_id`) with a 60-second TTL.
+   - GPS coordinates are **never written directly to PostgreSQL** on every tick. Only terminal trip milestones (`journey_started`, `arrived_at_site`) are committed to `order_events` in the relational database.
+
 
 ### A. Customer Mobile App (`react-native-maps`)
 1. **Marker Position Interpolation**: Rather than jumping abruptly, the specialist car icon uses `AnimatedRegion` / linear coordinate interpolation to animate smoothly over 5–10 second update intervals.

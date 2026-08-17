@@ -94,7 +94,37 @@ All application logs are formatted as single-line JSON strings to facilitate ing
 
 ---
 
-## 5. Key Production SLIs & SLOs (Service Level Objectives)
+## 5. Business & Operational Metrics (Prometheus & Grafana)
+
+In addition to infrastructure metrics, the system continuously aggregates real-time business and operational metrics:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 📊 Commercial & Throughput Metrics                          │
+│ • orders_created_total (by zone & vehicle type)             │
+│ • orders_completed_total                                    │
+│ • gross_merchandise_value_aed                               │
+│ • partial_completion_rate (% of multi-car with skipped items│
+│ • refund_amount_total_aed                                   │
+├─────────────────────────────────────────────────────────────┤
+│ ⏱️ Operational SLA & Transition Durations                   │
+│ • assignment_latency_seconds (ORDER_CREATED -> ASSIGNED)    │
+│ • dispatch_acceptance_duration (ASSIGNED -> EN_ROUTE)       │
+│ • transit_time_duration (EN_ROUTE -> ARRIVED)               │
+│ • wash_execution_duration (by service tier & car type)      │
+│ • specialist_stale_rate (heartbeat timeout events/hour)     │
+│ • admin_dispatch_override_rate (% manual vs recommended)    │
+├─────────────────────────────────────────────────────────────┤
+│ 🗺️ Capacity & Resource Utilization                          │
+│ • slot_capacity_saturation_ratio (by sub-zone & hour)       │
+│ • specialist_active_utilization_pct                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 6. Key Production SLIs & SLOs (Service Level Objectives)
+
 
 The engineering team monitors the following critical Service Level Indicators (SLIs) with automated PagerDuty alerting:
 

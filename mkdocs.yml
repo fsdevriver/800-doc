@@ -133,6 +133,8 @@ nav:
       - ADR-006 S3 Pre-signed Uploads: adr/ADR-006-s3-presigned-uploads.md
       - ADR-007 Idempotency & Fault Tolerance: adr/ADR-007-idempotency-fault-tolerance.md
   - Engineering Governance:
+      - System Invariants & Failure Matrix: governance/system-invariants.md
       - Git & Release Strategy: governance/git-workflow.md
       - Environments & DevOps: governance/environments-devops.md
       - Audit Logging & Observability: governance/audit-logging.md
+
