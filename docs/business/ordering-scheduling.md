@@ -36,10 +36,13 @@ On-Demand orders are designed for instant doorstep fulfillment:
 Scheduled bookings allow customers to plan ahead with precision:
 
 - **Slot Granularity**: Configured by Admin with exact start times (e.g., `08:00 AM`, `09:00 AM`, `10:00 AM`, ..., `08:00 PM`).
-- **Slot Capacity Management**:
-    - Each sub-zone has an Admin-configured capacity per slot (e.g., `capacity = 4`).
-    - When 4 bookings are confirmed for `10:00 AM` in *Downtown Dubai*, that specific slot is marked `SOLD_OUT` and disabled in the customer app.
+- **Slot Capacity Management (Phase 1 vs Phase 2)**:
+  - **Phase 1 Model (Configured Slot Bounding)**: Each sub-zone has an Admin-configured capacity per slot (e.g., `capacity = 4`). When 4 bookings are confirmed for `10:00 AM` in *Downtown Dubai*, that specific slot is marked `SOLD_OUT` and disabled in the customer app.
+  - **Phase 2 Evolution (Technician-Hour Resource Modeling)**: Because different vehicle types and services consume varying durations (e.g., Sedan Express = 30 mins vs Luxury Ceramic Detailing = 90 mins), Phase 2 transitions from static slot counts to dynamic **Technician-Hour Availability**:
+    $$\text{Available Capacity} = \sum_{\text{techs} \in \text{zone}} \text{ShiftHours} - \sum_{\text{booked}} (\text{ServiceDuration} + \text{TravelBuffer})$$
 - **Booking Window**: Customers can schedule up to 7 days in advance.
+- **Concurrent Slot Reservation Locking**: Handled via Redis distributed locks during checkout to prevent two customers from booking the final available slot simultaneously.
+
 
 ---
 
