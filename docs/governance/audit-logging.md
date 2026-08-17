@@ -46,15 +46,64 @@ Every critical business action is logged into an immutable `audit_logs` table an
 
 ---
 
-## 3. Telemetry & Metrics (Prometheus & Grafana)
+## 3. Distributed Tracing & Telemetry (OpenTelemetry)
+
+To trace request execution paths across mobile clients, API gateways, database transactions, and background workers, every interaction is tagged with standard trace headers:
+
+- **Trace ID Propagation**: All HTTP headers and WebSocket messages carry `x-trace-id` (UUIDv7) and `x-correlation-id`.
+- **Trace Context**: Propagated through NestJS middlewares, BullMQ queue jobs, and external HTTP client calls.
 
 ```mermaid
-graph LR
-    API["⚙️ NestJS API Cluster"] -->|Exposes /metrics| PROM["📊 Prometheus Server"]
-    PROM --> GRAF["📈 Grafana Dashboards"]
-    
-    GRAF --> M1["Live Active Specialists (Dubai)"]
-    GRAF --> M2["Order Volume & Fulfillment Rate (%)"]
-    GRAF --> M3["API P99 Latency & Error Rate"]
-    GRAF --> M4["Average Washing Duration per Car Type"]
+sequenceDiagram
+    autonumber
+    actor Mobile as 📱 Mobile Client (React Native)
+    participant API as ⚙️ NestJS API (Trace Context)
+    participant DB as 🐘 PostgreSQL 17
+    participant Queue as ⚡ BullMQ Background Worker
+    participant S3 as ☁️ AWS S3 Storage
+
+    Mobile->>API: POST /api/v1/orders (x-trace-id: c8a4b89f-...)
+    Note over API: Attaches trace ID to request lifecycle & Pino logger
+    API->>DB: INSERT order (Tagged with trace ID)
+    API->>Queue: Enqueue INVOICE_PDF_GENERATION (Carries trace ID)
+    Queue->>S3: Upload PDF (Carries trace ID in metadata)
+    API-->>Mobile: 201 Created (x-trace-id returned in response header)
 ```
+
+---
+
+## 4. Structured JSON Logging Format (Pino)
+
+All application logs are formatted as single-line JSON strings to facilitate ingestion into Datadog, Grafana Loki, or AWS CloudWatch:
+
+```json
+{
+  "level": "info",
+  "time": 1771148800000,
+  "traceId": "c8a4b89f-3d12-4211-8e01-998e3b1c8f12",
+  "userId": "usr_9981",
+  "role": "SPECIALIST",
+  "context": "SpecialistStateService",
+  "action": "TRANSITION_STATE",
+  "from": "EN_ROUTE",
+  "to": "ARRIVED",
+  "orderId": "ord_5521",
+  "durationMs": 42
+}
+```
+
+---
+
+## 5. Key Production SLIs & SLOs (Service Level Objectives)
+
+The engineering team monitors the following critical Service Level Indicators (SLIs) with automated PagerDuty alerting:
+
+| Service Area | Service Level Indicator (SLI) | Target Objective (SLO) | Alert Trigger Condition |
+| :--- | :--- | :--- | :--- |
+| **Order Creation API** | HTTP POST latency (P95) | **< 350ms** | P95 > 800ms for 2 consecutive minutes |
+| **Geofence Check** | `ST_Contains` execution time | **< 50ms** | Query duration > 150ms |
+| **Telemetry GPS Stream** | Ingest-to-broadcast latency | **< 100ms** | Redis Pub/Sub queue lag > 500ms |
+| **Specialist Heartbeat** | Ping freshness interval | **< 30s** | Heartbeat missing for > 45s flags `STALE` |
+| **Photo Upload Pipeline** | S3 presigned URL generation | **< 80ms** | S3 SDK timeout rate > 1% over 5 mins |
+| **Platform Availability** | Successful HTTP 2xx/3xx responses | **99.9% uptime** | 5xx error rate > 0.5% over 3 mins |
+

@@ -48,12 +48,14 @@ graph TD
 
 | Feature Area | Architectural Implementation |
 | :--- | :--- |
-| **Multi-Application Ecosystem** | 1 Centralized Backend (NestJS), 1 Admin Web Portal (Next.js 16), 2 Mobile Apps (Customer & Specialist in React Native). |
+| **Multi-Application Ecosystem** | 1 Centralized Modular Monolith Backend (NestJS 11), 1 Admin Web Portal (Next.js 16), 2 Mobile Apps (Customer & Specialist in React Native 0.77+). |
 | **Spatial Precision** | Native PostgreSQL with **PostGIS extension** executing polygon bounding checks (`ST_Contains`) for Dubai sub-zones and out-of-boundary prevention. |
-| **Multi-Car Order Engine** | Atomic 1-to-Many Order architecture allowing different car categories (Sedan, SUV, Luxury) and independent service/add-on configurations within a single dispatch. |
-| **Operations Dispatch Model** | V1 Direct Admin Dispatching with live specialist state monitoring (`AVAILABLE`, `ASSIGNED`, `EN_ROUTE`, `ARRIVED`, `WASHING`, `OFFLINE`). |
-| **Quality Control & Audit** | Mandatory 2–4 inspection photos captured before and after washing per vehicle, immutably stored in S3 object storage. |
-| **Growth & Commercial Core** | Granular promo engine, tiered loyalty points, referral bonus distribution, and post-wash staff tipping system. |
+| **Multi-Car Order Engine** | Atomic 1-to-Many Order architecture with discrete per-car item state machines (`COMPLETED`, `SKIPPED`, `ACCESS_FAILED`) and automated partial refund sagas. |
+| **Operations Dispatch Model** | V1.5 Smart Recommendation Dispatching with proximity scoring + fallback manual direct assignment. |
+| **Fault Tolerance & Idempotency** | Mandatory client-side `Idempotency-Key` headers (UUIDv7 + Redis locks), tiered sliding-window rate limiters, and `Opossum` circuit breakers. |
+| **Quality Control & UAE PDPL** | S3 pre-signed direct photo uploads with automated 90-day data retention lifecycle rules compliant with UAE Data Protection Law. |
+| **Observability & Health** | End-to-end OpenTelemetry distributed tracing (`x-trace-id`), structured Pino JSON logging, Redis TTL Heartbeat Watchdogs, and defined P95 latency SLOs. |
+
 
 ---
 

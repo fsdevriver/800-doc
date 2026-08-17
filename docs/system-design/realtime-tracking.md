@@ -117,7 +117,43 @@ When a customer requests an extra detailing service on-site:
 
 ---
 
-## 5. Offline-First Underground & Basement Parking Telemetry
+## 5. Specialist Heartbeat & Staleness Failover Engine
+
+To prevent orders from getting trapped in limbo when a specialist's phone runs out of battery, crashes, or loses cellular connectivity, 800-CarWash implements a **Redis TTL Heartbeat Watchdog**:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Spec as 🧑‍🔧 Specialist App
+    participant WS as ⚡ WebSocket Gateway
+    participant Redis as ⚡ Redis State Store
+    participant Watchdog as 🐕 BullMQ Watchdog Worker (Every 30s)
+    actor Ops as 💻 Admin Live Ops Board
+
+    loop Every 15 Seconds
+        Spec->>WS: Emit "specialist:heartbeat" {specialist_id, battery_pct, network_type}
+        WS->>Redis: SETEX specialist:{id}:heartbeat 45 "ONLINE"
+    end
+
+    Note over Spec: Phone battery dies / App crashes during "EN_ROUTE"
+    Note over Redis: 45 seconds pass -> Key specialist:{id}:heartbeat EXPIRES
+
+    Watchdog->>Redis: Scan active specialists with active jobs
+    Watchdog->>Redis: Check EXISTS specialist:{id}:heartbeat
+    Note over Watchdog: Key is missing! Specialist has gone unresponsive
+    Watchdog->>WS: Emit "specialist:stale:alert" {specialist_id, order_id, last_known_gps}
+    WS-->>Ops: Flag specialist as "UNRESPONSIVE (STALE)" on Live Board
+    Ops->>Ops: Reassign order with 1-Click to nearest available technician
+```
+
+### Staleness State Transitions:
+- `AVAILABLE` + Heartbeat Missing ➔ Auto-marked `OFFLINE`.
+- `EN_ROUTE` / `WASHING` + Heartbeat Missing for > 45s ➔ Marked `UNRESPONSIVE (STALE)` with immediate Admin alert.
+- Specialist reconnects ➔ Automatically clears `STALE` flag and resyncs active order state machine.
+
+---
+
+## 6. Offline-First Underground & Basement Parking Telemetry
 
 In high-density Dubai districts (Downtown, DIFC, Marina, Business Bay), underground basement parking lots (P1 to B4) frequently experience total cellular blackouts. The Specialist Mobile App is built with an **Offline-First Synchronous Store & Forward Queue**:
 

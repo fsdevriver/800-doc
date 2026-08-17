@@ -68,6 +68,24 @@ s3://800carwash-media-prod/
 
 ---
 
-## 3. Image Optimization & Compression
-- **Client-Side Compression**: Mobile app compresses captured JPEG photos before upload (target: max $1920 \times 1080$, quality: 80%, file size $\approx 300\text{--}500\text{ KB}$ per image).
-- **Lifecycle Policy**: S3 lifecycle rules transition inspection photos older than 180 days to S3 Standard-Infrequent Access (Standard-IA) and Glacier Flexible Retrieval after 365 days for cost optimization.
+---
+
+## 4. UAE PDPL Compliance & Automated Data Retention
+
+In accordance with **UAE Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data (PDPL)**, vehicle inspection photos (which may contain vehicle registration plates, building numbers, or customer reflections) are governed by strict data minimization and retention rules:
+
+```mermaid
+graph LR
+    S3_HOT["☁️ S3 Standard<br/>(Days 1–30: Active In-App Inspection)"]
+    S3_COLD["❄️ S3 Glacier Instant<br/>(Days 31–90: Dispute Window)"]
+    PURGE["🗑️ Permanent Deletion<br/>(Day 91: Automatic S3 Lifecycle Purge)"]
+
+    S3_HOT -->|Day 31 Lifecycle Rule| S3_COLD
+    S3_COLD -->|Day 91 Lifecycle Rule| PURGE
+```
+
+1. **Active Storage (Days 1–30)**: Stored in high-availability S3 Standard for in-app viewing by customer and specialist.
+2. **Dispute Window (Days 31–90)**: Transitioned to S3 Glacier Instant Retrieval for insurance damage liability audits.
+3. **Automated Expiry (Day 91+)**: Permanently deleted via automated S3 bucket lifecycle rules unless an active dispute hold is flagged on the order.
+4. **PII Masking & Privacy**: Customer contact details are never exposed to specialists after order completion; phone calls are routed via proxy bridges.
+

@@ -72,9 +72,36 @@ sequenceDiagram
 
 ---
 
-## 3. Customer UI Experience
-- The Customer Mobile App features an interactive **"Add Another Vehicle"** button in the booking cart.
-- Real-time progress indicators show:
-  - `Car 1 (BMW): Completed ✅`
-  - `Car 2 (Range Rover): In Progress (Washing) ⏳`
-- Customers can preview the clean inspection photos for each car directly in the app.
+## 4. Multi-Car Partial Failure Sagas & Status Lifecycle
+
+In real-world multi-car bookings, unforeseen operational exceptions can affect one vehicle without invalidating the others (e.g. Car 1 is washed, but Car 2 is locked in a private garage or blocked by construction).
+
+### Discrete Item-Level Status Transitions:
+Each `order_item` maintains an independent state:
+$$\text{PENDING} \longrightarrow \text{IN\_PROGRESS} \longrightarrow \begin{cases} \text{COMPLETED} \\ \text{SKIPPED (Customer Requested)} \\ \text{ACCESS\_FAILED (Locked/Blocked)} \end{cases}$$
+
+```mermaid
+stateDiagram-v2
+    [*] --> OrderCreated: Master Order Created
+    OrderCreated --> Car1Washing: Specialist Starts Car 1
+    Car1Washing --> Car1Completed: Car 1 Cleaned
+    Car1Completed --> Car2Washing: Specialist Starts Car 2
+    
+    state Car2Washing {
+        [*] --> InAccessible: Vehicle Locked / No Response
+        InAccessible --> Car2Skipped: Grace Period Expired
+    }
+
+    Car2Skipped --> PartialSettlement: Auto Refund / Credit Adjustment
+    PartialSettlement --> [*]: Order Marked PARTIALLY_COMPLETED
+```
+
+### Compensation & Settlement Rules:
+1. **Dynamic Master Order Status**:
+   - All items `COMPLETED` $\rightarrow$ Order is `COMPLETED`.
+   - Some items `COMPLETED` and others `SKIPPED` $\rightarrow$ Order transitions to `PARTIALLY_COMPLETED`.
+2. **Automated Refund & Balance Adjustment**:
+   - If an item is marked `SKIPPED` or `ACCESS_FAILED`, the billing engine recalculates the subtotal.
+   - For online payments, a BullMQ job issues a partial refund for the skipped item and its specific add-ons within 24 hours.
+   - For Cash on Delivery (COD), the specialist app displays the adjusted total collection amount.
+
