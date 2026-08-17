@@ -1,0 +1,81 @@
+/* Comprehensive Dark Mode Pure White Text & Crisp Styling for All Mermaid Diagrams */
+
+[data-md-color-scheme="slate"] .mermaid {
+  filter: contrast(1.05);
+}
+
+/* Force all text elements, labels, spans and tspan nodes to pure white */
+[data-md-color-scheme="slate"] .mermaid text,
+[data-md-color-scheme="slate"] .mermaid tspan,
+[data-md-color-scheme="slate"] .mermaid span,
+[data-md-color-scheme="slate"] .mermaid .labelText,
+[data-md-color-scheme="slate"] .mermaid .nodeLabel,
+[data-md-color-scheme="slate"] .mermaid .edgeLabel,
+[data-md-color-scheme="slate"] .mermaid .messageText,
+[data-md-color-scheme="slate"] .mermaid .sequence-text,
+[data-md-color-scheme="slate"] .mermaid .loopText,
+[data-md-color-scheme="slate"] .mermaid text.actor,
+[data-md-color-scheme="slate"] .mermaid .noteText,
+[data-md-color-scheme="slate"] .mermaid .actor-man text,
+[data-md-color-scheme="slate"] .mermaid .statediagram-state text,
+[data-md-color-scheme="slate"] .mermaid .cluster text {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Sequence diagram numbers inside circles */
+[data-md-color-scheme="slate"] .mermaid .sequenceNumber {
+  fill: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+/* Sequence diagram actor heads & boxes */
+[data-md-color-scheme="slate"] .mermaid rect.actor,
+[data-md-color-scheme="slate"] .mermaid .actor-line {
+  fill: #1e293b !important;
+  stroke: #38bdf8 !important;
+}
+
+/* Note boxes in sequence diagrams */
+[data-md-color-scheme="slate"] .mermaid rect.note {
+  fill: #334155 !important;
+  stroke: #64748b !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid text.noteText {
+  fill: #f8fafc !important;
+}
+
+/* Sequence lines, activation boxes and arrows */
+[data-md-color-scheme="slate"] .mermaid .messageLine0,
+[data-md-color-scheme="slate"] .mermaid .messageLine1,
+[data-md-color-scheme="slate"] .mermaid line {
+  stroke: #e2e8f0 !important;
+  stroke-width: 1.5px !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid #arrowhead path,
+[data-md-color-scheme="slate"] .mermaid marker path {
+  fill: #e2e8f0 !important;
+  stroke: #e2e8f0 !important;
+}
+
+/* Flowchart Nodes */
+[data-md-color-scheme="slate"] .mermaid .node rect,
+[data-md-color-scheme="slate"] .mermaid .node circle,
+[data-md-color-scheme="slate"] .mermaid .node polygon {
+  fill: #1e293b !important;
+  stroke: #38bdf8 !important;
+}
+
+/* Flowchart Edges / Links */
+[data-md-color-scheme="slate"] .mermaid .flowchart-link,
+[data-md-color-scheme="slate"] .mermaid .edgePath path {
+  stroke: #cbd5e1 !important;
+}
+
+[data-md-color-scheme="slate"] .mermaid .edgeLabel rect {
+  fill: #0f172a !important;
+  opacity: 0.85;
+}
