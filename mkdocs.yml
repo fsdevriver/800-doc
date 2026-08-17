@@ -132,9 +132,15 @@ nav:
       - ADR-005 Direct Admin Dispatch: adr/ADR-005-direct-admin-dispatch.md
       - ADR-006 S3 Pre-signed Uploads: adr/ADR-006-s3-presigned-uploads.md
       - ADR-007 Idempotency & Fault Tolerance: adr/ADR-007-idempotency-fault-tolerance.md
+      - ADR-008 Transactional Outbox: adr/ADR-008-transactional-outbox.md
+      - ADR-009 VPS & Cold Standby Topology: adr/ADR-009-production-topology-vps-cold-standby.md
+      - ADR-010 Domain Contract Freeze: adr/ADR-010-domain-contract-freeze.md
   - Engineering Governance:
       - System Invariants & Failure Matrix: governance/system-invariants.md
       - Git & Release Strategy: governance/git-workflow.md
       - Environments & DevOps: governance/environments-devops.md
       - Audit Logging & Observability: governance/audit-logging.md
+  - Operations & Reliability:
+      - Disaster Recovery & BCP Runbook: operations/dr-bcp-runbook.md
+
 
